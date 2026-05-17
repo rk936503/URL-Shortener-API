@@ -59,21 +59,8 @@ pipeline {
         stage('Deploy to EC2') {
             steps {
                 echo ' Deploying to production...'
-                sshagent(['ec2-server-key']) {
-                    sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@EC2_PUBLIC_IP '
-                            docker pull ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                            docker stop url-shortener || true
-                            docker rm url-shortener || true
-                            docker run -d --name url-shortener \
-                                -p 8000:8000 \
-                                --restart always \
-                                -e DATABASE_URL=\$DATABASE_URL \
-                                -e JWT_SECRET=\$JWT_SECRET \
-                                ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                        '
-                    """
-                }
+                echo "Image ready: ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
+                echo 'To deploy manually: docker pull rk936503/url-shortener:latest && docker run -d -p 8000:8000 rk936503/url-shortener:latest'
             }
         }
     }
