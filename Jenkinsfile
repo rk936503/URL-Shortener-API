@@ -7,6 +7,10 @@ pipeline {
         REGISTRY = 'yourdockerhubuser'
     }
 
+    tools {
+        nodejs 'NodeJS-22'    
+    }
+
     stages {
         stage('Checkout') {
             steps {
