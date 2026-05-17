@@ -4,7 +4,7 @@ pipeline {
     environment {
         DOCKER_IMAGE = 'url-shortener'
         DOCKER_TAG = "${BUILD_NUMBER}"
-        REGISTRY = 'yourdockerhubuser'
+        REGISTRY = 'rk936503'
     }
 
     tools {
