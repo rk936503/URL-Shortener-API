@@ -7,7 +7,9 @@
   "scripts": {
     "dev": "node --watch index",
     "db:push": "drizzle-kit push",
-    "db:studio": "drizzle-kit studio"
+    "db:studio": "drizzle-kit studio",
+    "test": "node --experimental-vm-modules node_modules/.bin/jest",
+    "start": "node index.js"
   },
   "keywords": [],
   "author": "",
@@ -17,6 +19,8 @@
     "@types/node": "^22.15.30",
     "@types/pg": "^8.15.4",
     "drizzle-kit": "^0.31.1",
+    "jest": "^30.4.2",
+    "supertest": "^7.2.2",
     "tsx": "^4.19.4"
   },
   "dependencies": {
