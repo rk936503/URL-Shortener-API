@@ -56,13 +56,25 @@ pipeline {
             }
         }
 
-        stage('Deploy to EC2') {
+                stage('Deploy to EC2') {
             steps {
                 echo ' Deploying to production...'
-                echo "Image ready: ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}"
-                echo 'To deploy manually: docker pull rk936503/url-shortener:latest && docker run -d -p 8000:8000 rk936503/url-shortener:latest'
+                sshagent(['ec2-server-key']) {
+                    sh """
+                        ssh -o StrictHostKeyChecking=no ubuntu@16.170.205.142 '
+                            docker pull ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker stop url-shortener || true
+                            docker rm url-shortener || true
+                            docker run -d --name url-shortener \
+                                -p 8000:8000 \
+                                --restart always \
+                                ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
+                        '
+                    """
+                }
             }
         }
+
     }
 
     post {
