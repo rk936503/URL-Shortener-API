@@ -1,14 +1,33 @@
 import 'dotenv/config';
 
 import express from 'express';
+import helmet from 'helmet';
 import { authenticationMiddleware } from './middlewares/auth.middleware.js';
+import { metricsMiddleware } from './middlewares/metrics.middleware.js';
+import { loggingMiddleware } from './middlewares/logging.middleware.js';
+import { register } from './utils/metrics.js';
 import userRouter from './routes/user.routes.js';
 import urlRouter from './routes/url.routes.js';
 
 const app = express();
 const PORT = process.env.PORT ?? 8000;
 
+app.use(helmet());
 app.use(express.json());
+app.use(metricsMiddleware);
+app.use(loggingMiddleware);
+
+// Prometheus metrics endpoint
+app.get('/metrics', async (req, res) => {
+  res.set('Content-Type', register.contentType);
+  res.end(await register.metrics());
+});
+
+// Health check endpoint
+app.get('/health', (req, res) => {
+  res.json({ status: 'healthy', uptime: process.uptime() });
+});
+
 app.use(authenticationMiddleware);
 
 app.get('/', (req, res) => {
