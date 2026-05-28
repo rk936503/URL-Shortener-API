@@ -85,6 +85,10 @@ pipeline {
                             docker pull ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
                             docker tag ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG} ${REGISTRY}/${DOCKER_IMAGE}:latest
 
+                            # ── 3.5. Remove old standalone container holding port 8000 ──
+                            docker stop url-shortener 2>/dev/null || true
+                            docker rm   url-shortener 2>/dev/null || true
+
                             # ── 4. Bring up all production services ──
                             cd /home/ubuntu/app
                             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans app db prometheus grafana node-exporter
