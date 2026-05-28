@@ -64,6 +64,12 @@ pipeline {
                         ssh -o StrictHostKeyChecking=no ubuntu@16.170.211.69 '
                             set -e
 
+                            # ── 0. Ensure Docker Compose V2 plugin is installed ──
+                            if ! docker compose version > /dev/null 2>&1; then
+                                sudo apt-get update -y
+                                sudo apt-get install -y docker-compose-plugin
+                            fi
+
                             # ── 1. Clone repo on first deploy, or pull latest ──
                             if [ -d /home/ubuntu/app/.git ]; then
                                 cd /home/ubuntu/app && git pull origin main
