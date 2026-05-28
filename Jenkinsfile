@@ -91,6 +91,9 @@ pipeline {
 
                             # ── 4. Bring up all production services ──
                             cd /home/ubuntu/app
+                            # Remove stale grafana volume so it re-reads provisioning with correct uid
+                            docker rm -f app-grafana-1 2>/dev/null || true
+                            docker volume rm app_grafana_data 2>/dev/null || true
                             docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans app db prometheus grafana node-exporter
                         '
                     """
