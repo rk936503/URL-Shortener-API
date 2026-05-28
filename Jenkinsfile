@@ -66,8 +66,9 @@ pipeline {
 
                             # ── 0. Ensure Docker Compose V2 plugin is installed ──
                             if ! docker compose version > /dev/null 2>&1; then
-                                sudo apt-get update -y
-                                sudo apt-get install -y docker-compose-plugin
+                                sudo mkdir -p /usr/local/lib/docker/cli-plugins
+                                sudo curl -SL "https://github.com/docker/compose/releases/latest/download/docker-compose-linux-x86_64" -o /usr/local/lib/docker/cli-plugins/docker-compose
+                                sudo chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
                             fi
 
                             # ── 1. Clone repo on first deploy, or pull latest ──
