@@ -58,17 +58,29 @@ pipeline {
 
                 stage('Deploy to EC2') {
             steps {
-                echo ' Deploying to production...'
+                echo '🚀 Deploying all services to production...'
                 sshagent(['ec2-server-key']) {
                     sh """
                         ssh -o StrictHostKeyChecking=no ubuntu@16.170.211.69 '
+                            set -e
+
+                            # ── 1. Clone repo on first deploy, or pull latest ──
+                            if [ -d /app/.git ]; then
+                                cd /app && git pull origin main
+                            else
+                                git clone https://github.com/rk936503/URL-Shortener-API.git /app
+                            fi
+
+                            # ── 2. Write production .env ──
+                            printf "DATABASE_URL=postgres://postgres:admin@db:5432/postgres\nJWT_SECRET=supersecret\nPORT=8000\n" > /app/.env
+
+                            # ── 3. Pull the freshly built app image ──
                             docker pull ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
-                            docker stop url-shortener || true
-                            docker rm url-shortener || true
-                            docker run -d --name url-shortener \
-                                -p 8000:8000 \
-                                --restart always \
-                                ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
+                            docker tag ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG} ${REGISTRY}/${DOCKER_IMAGE}:latest
+
+                            # ── 4. Bring up all production services ──
+                            cd /app
+                            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --remove-orphans app db prometheus grafana node-exporter
                         '
                     """
                 }
