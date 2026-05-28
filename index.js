@@ -28,6 +28,16 @@ app.get('/health', (req, res) => {
   res.json({ status: 'healthy', uptime: process.uptime() });
 });
 
+// Version endpoint
+app.get('/version', (req, res) => {
+  res.json({
+    app: 'url-shortener',
+    version: '1.0.0',
+    node: process.version,
+    env: process.env.NODE_ENV ?? 'development',
+  });
+});
+
 app.use(authenticationMiddleware);
 
 app.get('/', (req, res) => {
