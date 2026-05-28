@@ -61,7 +61,7 @@ pipeline {
                 echo ' Deploying to production...'
                 sshagent(['ec2-server-key']) {
                     sh """
-                        ssh -o StrictHostKeyChecking=no ubuntu@16.170.205.142 '
+                        ssh -o StrictHostKeyChecking=no ubuntu@16.170.211.69 '
                             docker pull ${REGISTRY}/${DOCKER_IMAGE}:${DOCKER_TAG}
                             docker stop url-shortener || true
                             docker rm url-shortener || true
