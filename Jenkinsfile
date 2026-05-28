@@ -73,7 +73,9 @@ pipeline {
 
                             # ── 1. Clone repo on first deploy, or pull latest ──
                             if [ -d /home/ubuntu/app/.git ]; then
-                                cd /home/ubuntu/app && git pull origin main
+                                cd /home/ubuntu/app
+                                git fetch origin main
+                                git reset --hard origin/main
                             else
                                 git clone https://github.com/rk936503/URL-Shortener-API.git /home/ubuntu/app
                             fi
